@@ -6,3 +6,4 @@ api/__pycache__/models.cpython-311.pyc
 api/__pycache__/routes.cpython-311.pyc
 frontend/shopping_list.pdf
 api/__pycache__/
+api/cookbook/
