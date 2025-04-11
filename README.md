@@ -387,7 +387,7 @@ Following extensions have to be added to you VS Code editor:
 
 ```
 
-# Code Coverage for 5.0
+# Code Coverage for 6.0
 ![code coverage image](images/image-16.png)
 
 # Code Coverage
@@ -397,6 +397,12 @@ Following extensions have to be added to you VS Code editor:
 In case of any queries and for additional help, please email us at: help.cookbook@gmail.com
 
 # Meet the Team
+
+## Version 6
+- [Saamyar Alizadeh][https://github.com/Saamyar1]
+- [Srinivas Vasudevan][https://github.com/SrinivasVasudevan]
+- [Jill Marley][https://github.com/jillahmad17]
+
 
 ## Version 5
 <center>
@@ -469,10 +475,9 @@ In case of any queries and for additional help, please email us at: help.cookboo
 
 
 
-
 # Support
 You can find the dataset used for this project [here](https://drive.google.com/file/d/12CZFb7Ugmiw9zQ7M_qpRsn7pmaV1zW0c/view?usp=sharing)
-### 📊 Score Card for Version 5
+### 📊 Score Card for Version 6
 #### Total Grade: 102/105
 
 |Notes|Evidence|Score|
