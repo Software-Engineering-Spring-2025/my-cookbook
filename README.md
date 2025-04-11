@@ -399,9 +399,9 @@ In case of any queries and for additional help, please email us at: help.cookboo
 # Meet the Team
 
 ## Version 6
-- [Saamyar Alizadeh][https://github.com/Saamyar1]
-- [Srinivas Vasudevan][https://github.com/SrinivasVasudevan]
-- [Jill Marley][https://github.com/jillahmad17]
+- [Saamyar Alizadeh](https://github.com/Saamyar1)
+- [Srinivas Vasudevan](https://github.com/SrinivasVasudevan)
+- [Jill Marley](https://github.com/jillahmad17)
 
 
 ## Version 5
