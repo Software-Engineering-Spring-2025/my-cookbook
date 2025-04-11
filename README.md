@@ -70,11 +70,12 @@ CookBook isn’t just a tool—it’s your cooking companion, saving time and br
 ---
 
 # 🧑🏾‍🍳 Case Study
+
 John is interested in a virtual cookbook to keep track of his recipes. Using My Cook Book he is able to:
-a. Create a meal plan with a shopping list to prepare for the week, keeping track of recipes and ingredients in one place 
-b. Search his cookbook for meals based on certain ingredients, in case he has a craving
-c. Update the theme of his cookbook to maximize his customization preferences 
-d. Get personalized nutrition recommendations based on his 
+- a. Create a meal plan with a shopping list to prepare for the week, keeping track of recipes and ingredients in one place 
+- b. Search his cookbook for meals based on certain ingredients, in case he has a craving
+- c. Update the theme of his cookbook to maximize his customization preferences 
+- d. Get personalized nutrition recommendations based on his 
 
 # Content
 
@@ -526,48 +527,33 @@ but nevertheless, here is a track record that everyone is contributing a lot)|ev
 | Issues are being closed | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/issues?q=is%3Aissue+is%3Aclosed|
 | DOI badge | 3 | https://zenodo.org/records/14200974 |
 | Docs: format | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/blob/main/.github/workflows/autopep8.yml |
-| Docs: description  | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Docs: short animated video | 3 |  |
-| Docs: strong punchlines | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
+| Docs: what point descriptions of each class / function  | 2 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
+| Docs: how: for common use cases X,Y,Z mini-tutorials showing worked examples on how to do X,Y, Z | 3 |  |
+| Docs: why: docs tell a story, motivate the whole thing, deliver a punchline that makes you want to rush out and use the thing | 3 | John's case study in the ReadMe |
 | Docs: mini tutorials | 3 | https://github.com/Software-Engineering-2024-Group/BurnoutExtreme/blob/master/Tutorials.md#signup-and-sign-in |
 | Use of version control tools | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/blob/main/.github/workflows/autopep8.yml |
-| Use of style checkers | 3 | https://github.com/Software-Engineering-2024-Group/BurnoutExtreme/blob/master/.github/workflows/autopep8.yml |
-| Use of code formatters. | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/blob/main/.github/workflows/flake8.yml |
-| Use of syntax checkers. | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook?tab=readme-ov-file#style-checker-and-code-fomatter |
-| Use of code coverage | 3 | https://coveralls.io/github/Software-Engineering-2024-Group/my-cookbook?branch=main |
-| Other automated analysis tools | 2 | https://github.com/Software-Engineering-2024-Group/my-cookbook/blob/main/.github/workflows/build.yml |
 | Test cases exist | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/tree/main/tests |
 | Test cases are routinely executed | 2 | https://github.com/Software-Engineering-2024-Group/my-cookbook/tree/main/tests |
 | The files http://contributing.md/ lists coding standards and lots of tips | 3 |  |
 | Issues are discussed before they are closed | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/issues |
-| Chat channel: exists | 3 | whatsapp, discord(https://discord.gg/4zmAMZNY) |
+| Chat channel: exists | 3 | Discord channel in the Software Engineering Server with frequent use|
 | Test cases: a large proportion of the issues related to handling failing cases. | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/issues |
 | Evidence that the whole team is using the same tools | 3 |  |
 | Evidence that the members of the team are working across multiple places in the code base | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/pulse |
-| Short release cycles | 3 |  |
-| Does your website and documentation provide a clear, high-level overview of your software? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Does your website and documentation clearly describe the type of user who should use your software? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Do you publish case studies to show how your software has been used by yourself and others? | 3 |  |
-| Is the name of your project/software unique? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Is your project/software name free from trademark violations? | 3 |  |
-| Is your software available as a package that can be deployed without building it? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Is your software available for free? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Is your source code publicly available to download, either as a downloadable bundle or via access to a source code repository? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Is your software hosted in an established, third-party repository like GitHub? | 3 |  |
-| Is your documentation clearly available on your website or within your software? | 3 |  |
-| Does your documentation include a "quick start" guide, that provides a short overview of how to use your software with some basic examples of use? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| If you provide more extensive documentation, does this provide clear, step-by-step instructions on how to deploy and use your software? | 3 |  |
-| Do you provide a comprehensive guide to all your software’s commands, functions and options? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook |
-| Do you provide troubleshooting information that describes the symptoms and step-by-step solutions for problems and error messages? | 3 |  |
-| If your software can be used as a library, package or service by other software, do you provide comprehensive API documentation? | 3 |https://github.com/Software-Engineering-2024-Group/my-cookbook/blob/main/INSTALL.md |
-| Do you store your documentation under revision control with your source code? | 2 |  |
-| Do you publish your release history e.g. release data, version numbers, key features of each release etc. on your web site or in your documentation? | 3 |  |
-| Does your software describe how a user can get help with using your software? | 3 |  |
-| Does your website and documentation describe what support, if any, you provide to users and developers? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/blob/main/INSTALL.md |
-| Does your project have an e-mail address or forum that is solely for supporting users? | 3 |  |
-| Are e-mails to your support e-mail address received by more than one person? | 3 |  |
-| Does your project have a ticketing system to manage bug reports and feature requests? | 2 | https://github.com/Software-Engineering-2024-Group/my-cookbook/issues |
-| Is your project's ticketing system publicly visible to your users, so they can view bug reports and feature requests? | 3 | https://github.com/Software-Engineering-2024-Group/my-cookbook/issues |
+| Short release cycles | 3 | Commits made over time during the last few weeks |
+| The file .gitignore lists what files should not be saved to the repo. See [examples]i(https://github.com/github/gitignore)| 3 | In GH | 
+| The file INSTALL.md lists how to install the code | 3 | https://github.com/Software-Engineering-Spring-2025/my-cookbook/blob/main/INSTALL.md |
+| The file LICENSE.md lists rules of usage for this repo | 3 | https://github.com/Software-Engineering-Spring-2025/my-cookbook/blob/main/LICENSE| 
+| The file CODE-OF-CONDUCT.md lists rules of behavior for this repo; e.g. see example | 3 | https://github.com/Software-Engineering-Spring-2025/my-cookbook/blob/main/CODE_OF_CONDUCT.md |
+| The file CONTRIBUTING.md lists coding standards and lots of tips on how to extend the system without screwing things up; e.g. see example | 3 | https://github.com/Software-Engineering-Spring-2025/my-cookbook/blob/main/CONTRIBUTING.md |
+| The file README.md contains all the following | 3 | in GH |
+| Video | 3 | See ReadMe above |
+| DOI badge: exists. To get a Digitial Object Indentifier, regiser the project at Zenodo. DOI badges look like this: Zenodo doi badge | 3 | See ReadMe above https://github.com/Software-Engineering-Spring-2025/my-cookbook|
+| Badges showing your style checkers| 3 | See ReadMe above https://github.com/Software-Engineering-Spring-2025/my-cookbook |
+| Badges showing your code formatters. | 3 | See ReadMe above https://github.com/Software-Engineering-Spring-2025/my-cookbook |
+| Badges showing your syntax checkers. | 3 | See ReadMe above https://github.com/Software-Engineering-Spring-2025/my-cookbook |
+| Badges showing your code coverage tools | 3 | See ReadMe above https://github.com/Software-Engineering-Spring-2025/my-cookbook |
+| Badges showing any other Other automated analysis tools | 3 | See ReadMe above https://github.com/Software-Engineering-Spring-2025/my-cookbook |
 
 
 
