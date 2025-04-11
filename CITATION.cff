@@ -5,9 +5,17 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - given-names: Shreyash
-    family-names: Mohatta
-    email: somohatt@ncsu.edu
+-  given-names: Jill 
+    family-names: Marley
+    email: jahmad5@ncsu.edu
+    affiliation: North Carolina State University
+  - given-names: Saamyar
+    family-names: Alizadeh
+    email: ssalizad@ncsu.edu
+    affiliation: North Carolina State University
+ - given-names: Srinivas
+    family-names: Vasudevan
+    email: svasude7@ncsu.edu
     affiliation: North Carolina State University
   - given-names: Vinit
     family-names: Desai
@@ -28,4 +36,3 @@ authors:
 identifiers:
   - type: url
     value: 'https://doi.org/10.5281/zenodo.7133692'
-url: 'https://github.com/sam16222/CSC510_43_Project1'
