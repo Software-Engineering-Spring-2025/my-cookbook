@@ -69,6 +69,13 @@ CookBook isn’t just a tool—it’s your cooking companion, saving time and br
 
 ---
 
+# 🧑🏾‍🍳 Case Study
+John is interested in a virtual cookbook to keep track of his recipes. Using My Cook Book he is able to:
+a. Create a meal plan with a shopping list to prepare for the week, keeping track of recipes and ingredients in one place 
+b. Search his cookbook for meals based on certain ingredients, in case he has a craving
+c. Update the theme of his cookbook to maximize his customization preferences 
+d. Get personalized nutrition recommendations based on his 
+
 # Content
 
 <p align="center">
