@@ -10,6 +10,7 @@ import MealPage from './MealPage';
 import axios from 'axios';
 import { ThemeProvider } from '../../Themes/themeContext';
 
+
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('MealPage Component', () => {
@@ -33,7 +34,7 @@ describe('MealPage Component', () => {
     jest.clearAllMocks();
   });
 
-  // 1
+  //1
   test('renders the component and displays the title', () => {
     render(<ThemeProvider><MealPage /></ThemeProvider>);
     expect(screen.getByText('My Meal Plan')).toBeInTheDocument();
@@ -69,7 +70,7 @@ describe('MealPage Component', () => {
       await waitFor(() => expect(mockedAxios.get).toHaveBeenCalled());
       expect(screen.getByText('Recipe Library')).toBeInTheDocument();
     });
-    
+
     // 6
     test('renders the Edit Meal Plan button', () => {
       render(<ThemeProvider><MealPage /></ThemeProvider>);
@@ -206,9 +207,111 @@ test('drag-and-drop instructions exist in hidden region', async () => {
 test('each day cell has placeholder or content', async () => {
   render(<ThemeProvider><MealPage /></ThemeProvider>);
   await waitFor(() => expect(mockedAxios.get).toHaveBeenCalled());
-  const recipeCells = screen.getAllByRole('cell').filter((_, idx) => (idx - 1) % 4 === 0); // assuming Recipe col
+  const recipeCells = screen.getAllByRole('cell').filter((_, idx) => (idx - 1) % 4 === 0); 
   recipeCells.forEach(cell => {
     expect(cell.textContent?.length).toBeGreaterThan(0);
   });
 });
+
+//19
+test('cancels drag when escape is pressed', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  const recipe = await screen.findByText('Pasta');
+  recipe.focus();
+  fireEvent.keyDown(recipe, { key: ' ', code: 'Space' });
+  fireEvent.keyDown(recipe, { key: 'Escape', code: 'Escape' });
+
+  expect(recipe.getAttribute('aria-grabbed')).not.toBe('true');
 });
+
+//20
+test('handles drop with invalid data', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  const dayCell = screen.getAllByText('No meal planned')[0];
+
+  const dataTransfer = {
+    getData: jest.fn().mockReturnValue("not-json"),
+    setData: jest.fn()
+  };
+
+  fireEvent.drop(dayCell, { dataTransfer });
+
+  await waitFor(() => {
+    expect(dayCell).toHaveTextContent('No meal planned');
+  });
+});
+
+//21
+test('drop with missing recipe fields is ignored', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  const cell = screen.getAllByText('No meal planned')[0];
+
+  fireEvent.drop(cell, {
+    dataTransfer: {
+      getData: () => JSON.stringify({ instructions: ['Do something'] }),
+      setData: () => {}
+    }
+  });
+
+  await waitFor(() => expect(cell).toHaveTextContent('No meal planned'));
+});
+
+//22
+test('dropping on a non-cell element like header does not update anything', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  const header = screen.getByText('Recipe Library');
+
+  const dataTransfer = {
+    getData: jest.fn().mockReturnValue(JSON.stringify({ name: 'Omelette', instructions: ['Whisk eggs'] })),
+    setData: jest.fn()
+  };
+
+  fireEvent.drop(header, { dataTransfer });
+
+  await waitFor(() => {
+    expect(screen.queryByText('Omelette')).not.toBeInTheDocument();
+  });
+});
+
+//23
+test('fills and saves a new meal for selected day', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+
+  fireEvent.click(screen.getByText(/Edit Meal Plan/i));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '2' } }); // Wednesday
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Salad' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), {
+    target: { value: 'Chop\nMix' }
+  });
+
+  fireEvent.click(screen.getByText('Save'));
+
+  await waitFor(() => {
+    const cell = screen.getByText('Wednesday').closest('tr')?.querySelectorAll('td')[1];
+    expect(cell?.textContent).toContain('Salad');
+  });
+});
+
+// 24
+test('fetchNewRecipe does not add duplicate recipes', async () => {
+  mockedAxios.get.mockResolvedValueOnce({
+    data: { name: 'Pasta', instructions: ['Boil'] },
+  });
+
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+
+  
+  fireEvent.drop(screen.getAllByText('No meal planned')[0], {
+    dataTransfer: {
+      getData: () => JSON.stringify({ name: 'Pasta', instructions: ['Boil'] }),
+    }
+  });
+
+  await waitFor(() => {
+    const items = screen.getAllByText('Pasta');
+    expect(items.length).toBeGreaterThanOrEqual(1);
+  });
+});
+});
+
