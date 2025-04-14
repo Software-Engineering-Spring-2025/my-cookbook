@@ -135,7 +135,7 @@ def test_search_name_non_existent(setup_db):
     setup_db["recipes"].aggregate.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get(f"/search-name/{search_name.replace(' ', '%20')}")
+    response = client.get(f"/recipe/search-name/{search_name.replace(' ', '%20')}")
 
     assert response.status_code == 500
 
@@ -147,7 +147,7 @@ def test_search_name_special_characters(setup_db):
     setup_db["recipes"].aggregate.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get(f"/search-name/{search_name}")
+    response = client.get(f"/recipe/search-name/{search_name}")
 
     assert response.status_code == 500
     
@@ -169,7 +169,7 @@ def test_search_name_valid(setup_db):
     setup_db["recipes"].aggregate.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get(f"/search-name/{search_name.replace(' ', '%20')}")
+    response = client.get(f"/recipe/search-name/{search_name.replace(' ', '%20')}")
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
@@ -183,6 +183,6 @@ def test_search_name_non_existent(setup_db):
     setup_db["recipes"].aggregate.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get(f"/search-name/{search_name.replace(' ', '%20')}")
+    response = client.get(f"/recipe/search-name/{search_name.replace(' ', '%20')}")
 
     assert response.status_code == 500

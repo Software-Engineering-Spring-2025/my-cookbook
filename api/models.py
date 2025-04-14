@@ -154,9 +154,10 @@ class User(BaseModel):
 
 class ShoppingListItem(BaseModel):
     name: str
-    quantity: int
+    quantity: float
     unit: str
-    checked: bool
+    checked: bool = False
+    user_email: str
 
 class NutritionQuery(BaseModel):
     weight: float # in kg 

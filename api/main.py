@@ -11,20 +11,22 @@ this file. If not, please write to: help.cookbook@gmail.com
 from fastapi.middleware.cors import CORSMiddleware
 from routes import router
 from pymongo import MongoClient
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from models import ShoppingListItem
 from bson import ObjectId
 from typing import List
 import sys
 import os
 import certifi
+from pydantic import BaseModel
 
 sys.path.insert(0, '../')
 
 app = FastAPI()
-app.include_router(router) 
 
 ca = certifi.where()
+
+print(os.getenv("DB_NAME"))
 
 config = {
     "ATLAS_URI": os.getenv("ATLAS_URI"),
@@ -61,104 +63,125 @@ app.include_router(router, tags=["recipes"], prefix="/recipe")
 
 """ This api functions is for shopping list."""
 
+class ShoppingListItem(BaseModel):
+    name: str
+    quantity: float
+    unit: str
+    checked: bool = False
+    user_email: str
 
 @app.get("/shopping-list")
-async def get_shopping_list():
-    """Fetches the shopping list from the database or returns an empty list"""
+async def get_shopping_list(user_email: str = Query(...)):
+    """Fetches the shopping list for a specific user"""
     collection_name = "shopping-list"
+    print(user_email, 'user_email')
     if collection_name not in app.database.list_collection_names():
         app.database.create_collection(collection_name)
 
-    shopping_list = list(app.database[collection_name].find())
-    shopping_list = [{**item, "_id": str(item["_id"])}
-                     for item in shopping_list]
+    shopping_list = list(app.database[collection_name].find({"user_email": user_email}))
+    shopping_list = [{**item, "_id": str(item["_id"])} for item in shopping_list]
 
     return {"shopping_list": shopping_list}
-
 
 @app.post("/shopping-list/update")
 async def update_shopping_list(items: List[ShoppingListItem]):
     """
-    Extends the shopping list in the database with new items.
-    Ensures no duplicate items are added.
+    Updates the shopping list for a specific user.
+    Merges quantities for duplicate items.
     """
     collection_name = "shopping-list"
+    print(collection_name, 'collection_name')
     if collection_name not in app.database.list_collection_names():
         app.database.create_collection(collection_name)
 
     collection = app.database[collection_name]
 
-    # Fetch existing items from the database
-    existing_items = list(collection.find())
-    existing_items_dict = {
-        (item["name"], item["unit"]): item for item in existing_items
-    }
+    # Process each item
+    
+    for item in items:
+        print(item, 'item')
+        # Check if item with same name and unit exists for this user
+        existing_item = collection.find_one({
+            "name": item.name,
+            "unit": item.unit,
+            "user_email": item.user_email
+        })
 
-    # Filter new items to avoid duplicates based on 'name' and 'unit'
-    new_items = [
-        {"name": item.name, "quantity": item.quantity,
-            "unit": item.unit, "checked": item.checked}
-        for item in items
-        if (item.name, item.unit) not in existing_items_dict
-    ]
+        if existing_item:
+            # Update quantity for existing item
+            collection.update_one(
+                {"_id": existing_item["_id"]},
+                {"$inc": {"quantity": item.quantity}}
+            )
+        else:
+            # Insert new item
+            
+            collection.insert_one({
+                "name": item.name,
+                "quantity": item.quantity,
+                "unit": item.unit,
+                "checked": False,
+                "user_email": item.user_email
+            })
 
-    if not new_items:
-        raise HTTPException(status_code=400, detail="No new items to add.")
-
-    # Insert only new items
-    collection.insert_many(new_items)
-
-    # Fetch the updated list
-    updated_list = list(collection.find())
+    
+    # Return updated list for this user
+    print(items[0].user_email, 'updated till here')
+    updated_list = list(collection.find({"user_email": items[0].user_email}))
     updated_list = [{**item, "_id": str(item["_id"])} for item in updated_list]
 
     return {"message": "Shopping list updated successfully", "shopping_list": updated_list}
 
-
 @app.put("/shopping-list/{item_id}")
 async def update_shopping_list_item(item_id: str, item: ShoppingListItem):
-    """
-    Updates a single item in the shopping list by its ID.
-    Ensures the item exists before updating.
-    """
+    """Updates a shopping list item for a specific user"""
     collection_name = "shopping-list"
     collection = app.database[collection_name]
 
-    # Try to find the item by ID
-    existing_item = collection.find_one({"_id": ObjectId(item_id)})
+    # Verify the item belongs to the user
+    existing_item = collection.find_one({
+        "_id": ObjectId(item_id),
+        "user_email": item.user_email
+    })
 
     if not existing_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    # Prepare the updated data
-    updated_item_data = {
-        "name": item.name,
-        "quantity": item.quantity,
-        "unit": item.unit,
-        "checked": item.checked
-    }
+    # Update the item
+    result = collection.update_one(
+        {"_id": ObjectId(item_id)},
+        {"$set": {
+            "name": item.name,
+            "quantity": item.quantity,
+            "unit": item.unit,
+            "checked": item.checked
+        }}
+    )
 
-    # Update the item in the database
-    result = collection.update_one({"_id": ObjectId(item_id)}, {
-                                   "$set": updated_item_data})
-
-    if result.matched_count == 0:
+    if result.modified_count == 0:
         raise HTTPException(status_code=400, detail="Failed to update item")
 
-    # Fetch the updated list after the update
+    # Return updated item
     updated_item = collection.find_one({"_id": ObjectId(item_id)})
     updated_item = {**updated_item, "_id": str(updated_item["_id"])}
 
     return {"message": "Item updated successfully", "shopping_list_item": updated_item}
 
-
 @app.delete("/shopping-list/{item_id}")
-async def delete_shopping_list_item(item_id: str):
-    """Deletes an item from the shopping list by its ID"""
+async def delete_shopping_list_item(item_id: str, user_email: str):
+    """Deletes a shopping list item for a specific user"""
     collection_name = "shopping-list"
     collection = app.database[collection_name]
 
-    # Try to find and delete the item
+    # Verify the item belongs to the user
+    existing_item = collection.find_one({
+        "_id": ObjectId(item_id),
+        "user_email": user_email
+    })
+
+    if not existing_item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
     result = collection.delete_one({"_id": ObjectId(item_id)})
 
     if result.deleted_count == 0:

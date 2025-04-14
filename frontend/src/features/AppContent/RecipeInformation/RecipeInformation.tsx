@@ -27,6 +27,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Box,
 } from '@mui/material'
 import { BrowserRouter as Router } from 'react-router-dom';
 import StarIcon from '@mui/icons-material/Star'
@@ -39,6 +40,8 @@ import { getRecipeInfoInitiator } from './getRecipeInformation.action'
 import './RecipeInformation.css'
 import noImage from './no-image.png'
 import { FaWhatsapp, FaSlack, FaDiscord } from 'react-icons/fa'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 
 import axios from 'axios'
 
@@ -142,6 +145,60 @@ const RecipeInformationWrapped = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [selectedPlatform, setSelectedPlatform] = useState('slack')
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [notes, setNotes] = useState<string>('');
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [userNotes, setUserNotes] = useState<any[]>([]);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+
+  // Get current user email from localStorage
+  useEffect(() => {
+    const userEmail = localStorage.getItem('userEmail');
+    setCurrentUserEmail(userEmail);
+  }, []);
+
+  // Fetch user's notes when component mounts
+  useEffect(() => {
+    const fetchNotes = async () => {
+      if (currentUserEmail && id) {
+        try {
+          const notesresponse = await axios.get(`http://localhost:8000/recipe/${id}/notes?user_email=${currentUserEmail}`);
+          setUserNotes(notesresponse.data.notes);
+          // Set the most recent note as the current note
+          if (notesresponse.data.notes.length > 0) {
+            setNotes(notesresponse.data.notes[notesresponse.data.notes.length - 1].note);
+          }
+        } catch (error) {
+          console.error('Error fetching notes:', error);
+        }
+      }
+    };
+    fetchNotes();
+  }, [currentUserEmail, id]);
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNotes(e.target.value);
+  };
+
+  const handleSaveNotes = async () => {
+    if (!currentUserEmail) {
+      alert('Please log in to save notes');
+      return;
+    }
+
+    try {
+      await axios.post(`http://localhost:8000/recipe/${id}/notes`, { 
+        note: notes,
+        user_email: currentUserEmail
+      });
+      setIsEditingNotes(false);
+      // Refresh notes after saving
+      const notesresponse = await axios.get(`http://localhost:8000/recipe/${id}/notes?user_email=${currentUserEmail}`);
+      setUserNotes(notesresponse.data.notes);
+    } catch (error) {
+      console.error('Error saving notes:', error);
+      alert('Failed to save notes. Please try again.');
+    }
+  };
 
   const handleShareClick = (urlId: string, platform: 'slack' | 'discord') => {
     setOpenModal(true)
@@ -205,6 +262,30 @@ const RecipeInformationWrapped = () => {
     }
   }, [])
 
+  const handleAddToShoppingList = async () => {
+    if (!currentUserEmail) {
+      alert('Please log in to add ingredients to your shopping list');
+      return;
+    }
+
+    try {
+      const ingredients = recipeInfo.getRecipeInfoData?.ingredients.map((ingredient: any) => ({
+        name: ingredient || '',
+        quantity: parseFloat(ingredient.quantity) || 1, // Convert to float, default to 1 if invalid
+        unit: ingredient.unit || 'piece', // Default to 'piece' if no unit specified
+        checked: false,
+        user_email: currentUserEmail || ''
+      })) || [];
+
+      await axios.post('http://localhost:8000/shopping-list/update', ingredients);
+      alert('Ingredients added to shopping list!');
+    } catch (error) {
+      console.error('Error adding ingredients to shopping list:', error);
+      alert('Failed to add ingredients to shopping list');
+    }
+  };
+
+  
   if (recipeInfo.isGetRecipeInfoLoading) {
     return <div data-testid="loading-spinner"> Loading ... </div>
   }  else if (recipeInfo.isGetRecipeInfoError) {
@@ -344,6 +425,14 @@ style={{
     Add to Meal Plan
   </Button>
   <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddToShoppingList}
+            startIcon={<ShoppingCartIcon />}
+          >
+            Add to Shopping List
+  </Button>
+  <Button
     variant="outlined"
     style={{
       borderColor: theme.headerColor,
@@ -362,9 +451,7 @@ style={{
   >
     Go to Meal Plan
   </Button>
-</div>
-
-        
+</div>        
         <div style={{ float: 'left', width: '30vw',color: theme.color , background: theme.background}}>
           <Paper elevation={24} style={triviaPaperStyles}>
             <Grid container spacing={3} style={{ background: theme.background, color: theme.color,  }}>
@@ -666,28 +753,122 @@ style={{
           </Grid>
         </div>
         <div style={{ float: 'left', width: '30vw' , color: theme.color, background:theme.headerColor}}>
-          {recipe?.images?.length > 0 && recipe?.images[0] !== '' ? (
-            <Typography variant="subtitle1" gutterBottom>
-              <Stack direction="column" spacing={2} padding="25px">
-                {recipe.images
-                  .reverse()
-                  .slice(0, 3)
-                  .map((imageLink: string, idx: number) => {
-                    imageLink = imageLink.replaceAll('"', '')
-                    return (
-                      <img
-                        src={imageLink}
-                        alt={`Cannot display pic ${idx + 1}`}
-                      />
-                    )
-                  })}
-              </Stack>
-            </Typography>
-          ) : (
-            <img src={noImage} alt={`Cannot display pic`} />
-          )}
+          <Grid container spacing={2}> 
+            <Grid item xs={12}>
+              {recipe?.images?.length > 0 && recipe?.images[0] !== '' ? (
+                <Typography variant="subtitle1" gutterBottom>
+                  <Stack direction="column" spacing={2} padding="25px">
+                    {recipe.images
+                      .reverse()
+                      .slice(0, 3)
+                      .map((imageLink: string, idx: number) => {
+                        imageLink = imageLink.replaceAll('"', '')
+                        return (
+                          <img
+                            src={imageLink}
+                            alt={`Cannot display pic ${idx + 1}`}
+                          />
+                        )
+                      })}
+                  </Stack>
+                </Typography>
+              ) : (
+                <img src={noImage} alt={`Cannot display pic`} />
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <Paper elevation={24} style={{
+                backgroundColor: theme.background,
+                padding: '20px',
+                margin: '20px',
+                border: `2px solid ${theme.headerColor}`,
+              }}>
+                <Typography variant="h5" gutterBottom style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  color: theme.color 
+                }}>
+                  Notes
+                  <IconButton 
+                    onClick={() => setIsEditingNotes(!isEditingNotes)}
+                    style={{ color: theme.color }}
+                  >
+                    {isEditingNotes ? '✕' : '✎'}
+                  </IconButton>
+                </Typography>
+                
+                {isEditingNotes ? (
+                  <div>
+                    <textarea
+                      value={notes}
+                      onChange={handleNotesChange}
+                      style={{
+                        width: '100%',
+                        minHeight: '150px',
+                        padding: '10px',
+                        marginBottom: '10px',
+                        backgroundColor: theme.background,
+                        color: theme.color,
+                        border: `1px solid ${theme.headerColor}`,
+                        borderRadius: '4px',
+                      }}
+                      placeholder="Add your notes here..."
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={handleSaveNotes}
+                      style={{
+                        backgroundColor: theme.headerColor,
+                        color: theme.color,
+                      }}
+                    >
+                      Save Notes
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <Typography variant="body1" style={{ 
+                      color: theme.color,
+                      whiteSpace: 'pre-wrap',
+                      minHeight: '150px',
+                    }}>
+                      {notes || 'No notes added yet.'}
+                    </Typography>
+                    {userNotes.length > 0 && (
+                      <div style={{ marginTop: '20px' }}>
+                        <Typography variant="subtitle2" style={{ color: theme.color }}>
+                          Previous Notes:
+                        </Typography>
+                        {userNotes.slice(0, -1).reverse().map((note, index) => (
+                          <Paper key={index} style={{
+                            backgroundColor: theme.background,
+                            padding: '10px',
+                            marginTop: '10px',
+                            border: `1px solid ${theme.headerColor}`,
+                          }}>
+                            <Typography variant="body2" style={{ color: theme.color }}>
+                              {note.note}
+                            </Typography>
+                            <Typography variant="caption" style={{ color: theme.color }}>
+                              {new Date(note.created_at).toLocaleString()}
+                            </Typography>
+                          </Paper>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Paper>
+            </Grid>
+          </Grid>
         </div>
-      </div>
+        </div>
+        
+        
+        
+      
+    
     )
   } else {
     return <> Error! Recipe not found! </>
