@@ -69,7 +69,7 @@ def test_search2_valid_input(setup_db):
     setup_db["recipes"].find.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get("/search2/chicken,200,500")
+    response = client.get("/recipe/search2/chicken,200,500")
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
@@ -79,21 +79,21 @@ def test_search2_valid_input(setup_db):
 def test_search2_valid_calorie_range(setup_db):
     """Test searching for recipes with an valid calorie range (min > max)."""
     client = TestClient(app)
-    response = client.get("/search2/chicken,100,200")
+    response = client.get("/recipe/search2/chicken,100,200")
     assert response.status_code == 200
 
 
 def test_search2_missing_ingredient(setup_db):
     """Test searching for recipes with a missing ingredient."""
     client = TestClient(app)
-    response = client.get("/search2/,100,300")
+    response = client.get("/recipe/search2/,100,300")
     assert response.status_code == 404
 
 
 def test_search2_boundary_calories(setup_db):
     """Test searching for recipes with boundary calorie values."""
     client = TestClient(app)
-    response = client.get("/search2/beef,0,1000")
+    response = client.get("/recipe/search2/beef,0,1000")
     assert response.status_code == 200
 
 
@@ -104,7 +104,7 @@ def test_search2_non_existent_ingredient(setup_db):
     setup_db["recipes"].find.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get("/search2/unicorn,100,300")
+    response = client.get("/recipe/search2/unicorn,100,300")
 
     assert response.status_code == 200
     assert response.json() == []

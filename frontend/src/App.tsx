@@ -28,6 +28,7 @@ import CustomizedAccordions from './features/AppContent/NutritionFilter/Customiz
 import { ThemeProvider, useTheme } from './features/Themes/themeContext';
 import Login from "./features/AppContent/HomePage/Login"; 
 import Profile from "./features/AppContent/HomePage/Profile";
+import AIAssistantButton from './features/AIAssistant/AIAssistantButton';
 
 const store = applicationStore();
 
@@ -52,6 +53,7 @@ const AppContentLayout: React.FC = () => {
       <div className="App-body" data-testid="body-comp-43" style={{ backgroundColor: theme.background }}>
         <AppContent />
       </div>
+      <AIAssistantButton />
     </div>
   );
 };

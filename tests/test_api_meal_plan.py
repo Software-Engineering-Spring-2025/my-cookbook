@@ -6,7 +6,11 @@ from fastapi.testclient import TestClient
 import pytest
 from main import app
 from bson import ObjectId
+from pydantic import BaseModel, conint, conlist, PositiveInt
 
+class MealPlanEntry(BaseModel):
+    day: int  # 0-6 representing Monday-Sunday
+    recipe: dict  # The recipe details (name, instructions, etc.)
 
 @pytest.fixture
 def setup_db():
@@ -16,6 +20,7 @@ def setup_db():
 
 def test_save_meal_plan_success(setup_db):
     """Test saving a meal plan for a specific day successfully."""
+    
     meal_plan_data = {
         "day": 2,
         "recipe": {"name": "Pasta", "calories": "500"}
@@ -25,7 +30,7 @@ def test_save_meal_plan_success(setup_db):
     setup_db["meal_plans"].update_one.return_value = MagicMock(matched_count=1, upserted_id=None)
 
     client = TestClient(app)
-    response = client.post("/meal-plan/", json=meal_plan_data)
+    response = client.post("/recipe/meal-plan/", json=meal_plan_data)
 
     # Assertions
     assert response.status_code == 200
@@ -48,7 +53,7 @@ def test_get_meal_plan_success(setup_db):
     setup_db["meal_plans"].find.return_value = mocked_meal_plan
 
     client = TestClient(app)
-    response = client.get("/meal-plan/")
+    response = client.get("/recipe/meal-plan/")
 
     # Expected full plan with missing days as None
     expected_response = [
@@ -74,7 +79,7 @@ def test_save_meal_plan_failure(setup_db):
     setup_db["meal_plans"].update_one.side_effect = Exception("Database error")
 
     client = TestClient(app)
-    response = client.post("/meal-plan/", json=meal_plan_data)
+    response = client.post("/recipe/meal-plan/", json=meal_plan_data)
 
     assert response.status_code == 500
     assert response.json()["detail"] == "An error occurred while saving the meal plan."
@@ -86,7 +91,7 @@ def test_get_meal_plan_failure(setup_db):
     setup_db["meal_plans"].find.side_effect = Exception("Database error")
 
     client = TestClient(app)
-    response = client.get("/meal-plan/")
+    response = client.get("/recipe/meal-plan/")
 
     assert response.status_code == 500
     
@@ -101,7 +106,7 @@ def test_save_meal_plan():
             "instructions": "Butter bread, add cheese, and grill until golden."
         }
     }
-    response = client.post("/meal-plan/", json=entry)
+    response = client.post("/recipe/meal-plan/", json=entry)
     assert response.status_code == 200
     assert response.json()["message"] == "Meal plan saved successfully."
 
@@ -121,7 +126,7 @@ def test_advanced_search_by_ingredient_and_calories(setup_db):
     app.database["recipes"].find.return_value = cursor_mock
 
     client = TestClient(app)
-    response = client.get(f"/search2/{ingredient},{calories_low},{calories_up}")
+    response = client.get(f"/recipe/search2/{ingredient},{calories_low},{calories_up}")
 
     assert response.status_code == 200
     recipes = response.json()
@@ -134,7 +139,7 @@ def test_advanced_search_by_ingredient_and_calories(setup_db):
 def test_advanced_search_valid_calorie_range(setup_db):
     """ Test searching with an invalid calorie range."""
     client = TestClient(app)
-    response = client.get("/search2/chicken,500,100")  
+    response = client.get("/recipe/search2/chicken,500,100")  
     assert response.status_code == 200
 
 
@@ -142,6 +147,6 @@ def test_advanced_search_no_results(setup_db):
     """ Test searching with no matching results."""
     app.database["recipes"].find.return_value.__iter__.return_value = iter([])  # No results
     client = TestClient(app)
-    response = client.get("/search2/fish,100,300")
+    response = client.get("/recipe/search2/fish,100,300")
     assert response.status_code == 200
     assert response.json() == []  # Empty list when no matches

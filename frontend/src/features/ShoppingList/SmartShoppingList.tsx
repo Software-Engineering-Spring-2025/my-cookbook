@@ -27,6 +27,7 @@ interface ShoppingItem {
   quantity: number
   unit: string
   checked: boolean
+  user_email?: string
 }
 
 const SmartShoppingList: React.FC = () => {
@@ -37,6 +38,7 @@ const SmartShoppingList: React.FC = () => {
   const [unit, setUnit] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
 
   const units = [
     'kg',
@@ -63,27 +65,39 @@ const SmartShoppingList: React.FC = () => {
   ]
 
   useEffect(() => {
-    const fetchListItems = async () => {
-      setLoading(true)
-      try {
-        const response = await axios.get('http://localhost:8000/shopping-list')
-        setListItems(response.data.shopping_list)
-      } catch (error) {
-        console.error('Error fetching shopping list:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+    const email = localStorage.getItem('userEmail');
+    setUserEmail(email);
+  }, []);
 
-    fetchListItems()
-  }, [])
+  useEffect(() => {
+    const fetchListItems = async () => {
+      if (!userEmail) return;
+      
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://localhost:8000/shopping-list?user_email=${userEmail}`);
+        setListItems(response.data.shopping_list);
+      } catch (error) {
+        console.error('Error fetching shopping list:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListItems();
+  }, [userEmail]);
 
   const addItemToList = async () => {
-    if (!newItem.trim() || !unit.trim()) {
-      window.alert('Please fill in all fields.')
-      return
+    if (!userEmail) {
+      alert('Please log in to add items to your shopping list');
+      return;
     }
-    setIsProcessing(true)
+
+    if (!newItem.trim() || !unit.trim()) {
+      window.alert('Please fill in all fields.');
+      return;
+    }
+    setIsProcessing(true);
 
     try {
       const newItemData = {
@@ -91,57 +105,63 @@ const SmartShoppingList: React.FC = () => {
         quantity,
         unit,
         checked: false,
-      }
+        user_email: userEmail
+      };
 
       const response = await axios.post(
         'http://localhost:8000/shopping-list/update',
         [newItemData]
-      )
+      );
 
-      setListItems(response.data.shopping_list)
-      setNewItem('')
-      setQuantity(1)
-      setUnit('')
+      setListItems(response.data.shopping_list);
+      setNewItem('');
+      setQuantity(1);
+      setUnit('');
     } catch (error) {
-      console.error('Error adding item:', error)
+      console.error('Error adding item:', error);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const toggleItemCheck = async (itemId: string) => {
-    const itemIndex = listItems.findIndex((item) => item._id === itemId)
-    if (itemIndex === -1) return
+    if (!userEmail) return;
+
+    const itemIndex = listItems.findIndex((item) => item._id === itemId);
+    if (itemIndex === -1) return;
 
     const updatedItem = {
       ...listItems[itemIndex],
       checked: !listItems[itemIndex].checked,
-    }
+      user_email: userEmail
+    };
 
     try {
       await axios.put(
         `http://localhost:8000/shopping-list/${itemId}`,
         updatedItem
-      )
+      );
 
-      const updatedItems = [...listItems]
-      updatedItems[itemIndex] = updatedItem
-      setListItems(updatedItems)
+      const updatedItems = [...listItems];
+      updatedItems[itemIndex] = updatedItem;
+      setListItems(updatedItems);
     } catch (error) {
-      console.error('Error updating item check status:', error)
+      console.error('Error updating item check status:', error);
     }
-  }
+  };
 
   const deleteItem = async (itemId: string) => {
+    if (!userEmail) return;
+
     try {
-      await axios.delete(`http://localhost:8000/shopping-list/${itemId}`)
+      await axios.delete(`http://localhost:8000/shopping-list/${itemId}?user_email=${userEmail}`);
       setListItems((prevItems) =>
         prevItems.filter((item) => item._id !== itemId)
-      )
+      );
     } catch (error) {
-      console.error('Error deleting item:', error)
+      console.error('Error deleting item:', error);
     }
-  }
+  };
 
   const exportListToPDF = () => {
     const doc = new jsPDF()

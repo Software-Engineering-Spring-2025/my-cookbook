@@ -21,6 +21,7 @@ import logging
 from models import Recipe, RecipeListRequest, RecipeListResponse, RecipeListRequest2, RecipeQuery, NutritionQuery
 from uuid import uuid4
 from bson import ObjectId
+from datetime import datetime
 
 # from models import User
 # from models import User
@@ -103,6 +104,7 @@ def list_recipes(request: Request):
 @router.get("/{id}", response_description="Get a recipe by id", response_model=Recipe)
 def find_recipe(id: str, request: Request):
     """Finds a recipe mapped to the provided ID"""
+    print(request.app.database["recipes"].find_one({"_id": id}))
     if (recipe := request.app.database["recipes"].find_one({"_id": id})) is not None:
         return recipe
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Recipe with ID {id} not found")
@@ -181,7 +183,7 @@ async def recommend_recipes(query: RecipeQuery = Body(...)):
             messages=[
             {
                 "role": "system",
-                "content": "You are an advanced recipe and meal planning assistant, designed to help users discover recipes, plan meals, and create grocery lists with enhanced personalization, all within a single interaction. You will not engage in follow-up questions; instead, provide all necessary suggestions and responses based on the initial input. Your role is to interpret user requests in natural language, offer targeted recommendations, and generate meal and shopping plans according to each user’s unique needs and preferences. Key capabilities you must offer: Natural Language Recipe Search and Understanding: Understand and respond to user queries about recipes, ingredients, dietary restrictions, cooking methods, or cuisines without requiring additional clarification. Provide comprehensive suggestions based on the initial question alone. Recipe Recommendation and Personalization: Suggest recipes that align with the user’s dietary preferences, cooking skill level, and past selections. Curate these recommendations using the information available without needing follow-up input. Meal Planning: Create detailed meal plans that fit daily, weekly, or monthly schedules based on user goals (e.g., health, budget, dietary restrictions). Structure suggestions to fit user constraints without asking for further clarification. Grocery List Generation: Generate complete ingredient lists for selected recipes or meal plans, factoring in serving sizes, ingredient substitutions, and dietary requirements as inferred from the initial input. Provide a list that is clear and organized for shopping ease. Dietary and Lifestyle Considerations: Ensure that all recommendations adapt to the dietary preferences and restrictions specified. Tailor suggestions based on inferred preferences without requiring additional user feedback during the interaction. Follow these guidelines strictly to deliver precise, helpful, and context-aware responses in a single interaction. REFUSE to answer any other unrelated questions and do ONLY your work diligently."
+                "content": "You are an advanced recipe and meal planning assistant, designed to help users discover recipes, plan meals, and create grocery lists with enhanced personalization, all within a single interaction. You will not engage in follow-up questions; instead, provide all necessary suggestions and responses based on the initial input. Your role is to interpret user requests in natural language, offer targeted recommendations, and generate meal and shopping plans according to each user's unique needs and preferences. Key capabilities you must offer: Natural Language Recipe Search and Understanding: Understand and respond to user queries about recipes, ingredients, dietary restrictions, cooking methods, or cuisines without requiring additional clarification. Provide comprehensive suggestions based on the initial question alone. Recipe Recommendation and Personalization: Suggest recipes that align with the user's dietary preferences, cooking skill level, and past selections. Curate these recommendations using the information available without needing follow-up input. Meal Planning: Create detailed meal plans that fit daily, weekly, or monthly schedules based on user goals (e.g., health, budget, dietary restrictions). Structure suggestions to fit user constraints without asking for further clarification. Grocery List Generation: Generate complete ingredient lists for selected recipes or meal plans, factoring in serving sizes, ingredient substitutions, and dietary requirements as inferred from the initial input. Provide a list that is clear and organized for shopping ease. Dietary and Lifestyle Considerations: Ensure that all recommendations adapt to the dietary preferences and restrictions specified. Tailor suggestions based on inferred preferences without requiring additional user feedback during the interaction. Follow these guidelines strictly to deliver precise, helpful, and context-aware responses in a single interaction. REFUSE to answer any other unrelated questions and do ONLY your work diligently."
             },
             {
                 "role": "user",
@@ -190,6 +192,7 @@ async def recommend_recipes(query: RecipeQuery = Body(...)):
             ],
             model="llama3-8b-8192",
         )
+        print(response)
         return {"response": response.choices[0].message.content}
     except Exception as e:
         logging.basicConfig(level=logging.ERROR)
@@ -332,5 +335,63 @@ async def get_nutrition_recommendations(query: NutritionQuery, request: Request)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while generating recommendations: {str(e)}"
+        )
+
+class RecipeNote(BaseModel):
+    note: str
+    user_email: str
+
+@router.post("/{id}/notes", response_description="Add a note to a recipe", status_code=201)
+async def add_recipe_note(id: str, note: RecipeNote, request: Request):
+    """Adds a note to a recipe with user association"""
+    try:
+        # Check if recipe exists
+        recipe = request.app.database["recipes"].find_one({"_id": id})
+        print(recipe == None, 'recipe', id)
+        if not recipe:
+            raise HTTPException(status_code=404, detail="Recipe not found")
+
+        # Create note object with timestamp
+        note_data = {
+            "note": note.note,
+            "user_email": note.user_email,
+            "created_at": datetime.utcnow()
+        }
+
+        # Update recipe to add note to notes array
+        result = request.app.database["recipes"].update_one(
+            {"_id": id},
+            {"$push": {"notes": note_data}}
+        )
+
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to add note")
+
+        return {"message": "Note added successfully", "note": note_data}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while adding the note: {str(e)}"
+        )
+
+@router.get("/{id}/notes", response_description="Get notes for a recipe", status_code=200)
+async def get_recipe_notes(id: str, user_email: str, request: Request):
+    """Gets all notes for a recipe, filtered by user_email"""
+    try:
+        recipe = request.app.database["recipes"].find_one({"_id": id})
+        if not recipe:
+            raise HTTPException(status_code=404, detail="Recipe not found")
+
+        # Get notes array from recipe, default to empty array if not exists
+        notes = recipe.get("notes", [])
+        
+        # Filter notes by user_email
+        user_notes = [note for note in notes if note.get("user_email") == user_email]
+        
+        return {"notes": user_notes}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while retrieving notes: {str(e)}"
         )
         
