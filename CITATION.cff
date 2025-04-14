@@ -1,38 +1,31 @@
 cff-version: 1.2.0
-title: CookBook
-message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
-type: software
-authors:
--  given-names: Jill 
-    family-names: Marley
-    email: jahmad5@ncsu.edu
-    affiliation: North Carolina State University
-  - given-names: Saamyar
-    family-names: Alizadeh
-    email: ssalizad@ncsu.edu
-    affiliation: North Carolina State University
- - given-names: Srinivas
-    family-names: Vasudevan
-    email: svasude7@ncsu.edu
-    affiliation: North Carolina State University
-  - given-names: Vinit
-    family-names: Desai
-    email: vdesai5@ncsu.edu
-    affiliation: North Carolina State University
-  - given-names: Asrita
-    family-names: Kuchibhotla
-    email: akuchib@ncsu.edu
-    affiliation: North Carolina State University
-  - given-names: 'Karan '
-    family-names: Kajani
-    email: kkajani@ncsu.edu
-    affiliation: North Carolina State University
-  - given-names: Priyanka
-    family-names: Ambawane
-    email: pambawa@ncsu.edu
-    affiliation: North Carolina State University
-identifiers:
-  - type: url
-    value: 'https://doi.org/10.5281/zenodo.7133692'
+ title: CookBook
+ message: >-
+   If you use this software, please cite it using the
+   metadata from this file.
+ type: software
+ authors:
+   - given-names: Shreyash
+     family-names: Mohatta
+     email: somohatt@ncsu.edu
+     affiliation: North Carolina State University
+   - given-names: Vinit
+     family-names: Desai
+     email: vdesai5@ncsu.edu
+     affiliation: North Carolina State University
+   - given-names: Asrita
+     family-names: Kuchibhotla
+     email: akuchib@ncsu.edu
+     affiliation: North Carolina State University
+   - given-names: 'Karan '
+     family-names: Kajani
+     email: kkajani@ncsu.edu
+     affiliation: North Carolina State University
+   - given-names: Priyanka
+     family-names: Ambawane
+     email: pambawa@ncsu.edu
+     affiliation: North Carolina State University
+ identifiers:
+   - type: url
+     value: 'https://doi.org/10.5281/zenodo.7133692'
+ url: 'https://github.com/sam16222/CSC510_43_Project1'
