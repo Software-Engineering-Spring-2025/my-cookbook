@@ -40,7 +40,7 @@ def test_get_nutrition_recommendations_success(setup_chatbot, nutrition_query_pa
 
     response = client.post("/recipe/nutrition-chatbot/", json=nutrition_query_payload)
 
-    assert response.status_code == 500
+    assert response.status_code == 200
     # data = response.json()
 
     # # 🔍 Check for calculated TDEE and macronutrients
