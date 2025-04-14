@@ -223,7 +223,7 @@ def test_nutrition_chatbot(setup_db):
         "goal": "lose weight"
     }
     response = client.post("/recipe/nutrition-chatbot/", json=query)
-    assert response.status_code == 500
+    assert response.status_code == 200
     # data = response.json()
     # assert "recommended_calories" in data
     # assert "recommended_protein_g" in data
