@@ -84,3 +84,4 @@ test('images being showed correctly', () => {
   </ThemeProvider>);
   expect(getByAltText("tenth image")).toBeInTheDocument();
 });
+
