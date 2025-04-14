@@ -48,7 +48,7 @@ jobs:
     - name: Upload coverage report
       if: success()
       env:  # Set GITHUB_TOKEN for Coveralls
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
         pip install coveralls
         coveralls

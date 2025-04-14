@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import './HomePage.css'
 import { useTheme } from '../../Themes/themeContext'
@@ -10,6 +9,12 @@ import {
   DragEndEvent,
 } from '@dnd-kit/core'
 
+interface Recipe {
+  name: string
+  instructions?: string[] | string
+  [key: string]: any
+}
+
 const daysOfWeek = [
   'Monday',
   'Tuesday',
@@ -20,7 +25,12 @@ const daysOfWeek = [
   'Sunday',
 ]
 
-const RecipeCard = ({ recipe }: { recipe: any }) => {
+const formatInstructions = (instructions: string | string[] | undefined): string => {
+  if (!instructions) return '-'
+  return Array.isArray(instructions) ? instructions.join(', ') : instructions
+}
+
+const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: recipe.name,
     data: recipe,
@@ -30,12 +40,13 @@ const RecipeCard = ({ recipe }: { recipe: any }) => {
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,
-    padding: '10px',
+    padding: '8px',
     border: '1px solid gray',
-    marginBottom: '10px',
+    minWidth: '100px',
+    marginRight: '10px',
     cursor: 'grab',
     backgroundColor: 'white',
-    fontSize: '12px',
+    fontSize: '10px',
   }
 
   return (
@@ -45,7 +56,7 @@ const RecipeCard = ({ recipe }: { recipe: any }) => {
   )
 }
 
-const DroppableCell = ({ index, children }: any) => {
+const DroppableCell = ({ index, children }: { index: number; children: React.ReactNode }) => {
   const { setNodeRef } = useDroppable({
     id: `day-${index}`,
   })
@@ -53,7 +64,7 @@ const DroppableCell = ({ index, children }: any) => {
   return (
     <td
       ref={setNodeRef}
-      style={{ border: '1px solid', padding: '8px', minHeight: '40px', fontSize: '12px' }}
+      style={{ border: '1px solid', padding: '8px', minHeight: '40px', fontSize: '10px' }}
       onDrop={(e) => e.preventDefault()}
     >
       {children}
@@ -62,20 +73,19 @@ const DroppableCell = ({ index, children }: any) => {
 }
 
 const MealPage = () => {
-  console.log('MealPage loaded')
   const { theme } = useTheme()
-  const [mealPlan, setMealPlan] = useState<any[]>(Array(7).fill(null))
+  const [mealPlan, setMealPlan] = useState<(Recipe | null)[]>(Array(7).fill(null))
   const [showForm, setShowForm] = useState(false)
   const [selectedDay, setSelectedDay] = useState<number>(0)
   const [recipeName, setRecipeName] = useState('')
   const [recipeInstructions, setRecipeInstructions] = useState('')
-  const [recipeLibrary, setRecipeLibrary] = useState<any[]>([])
+  const [recipeLibrary, setRecipeLibrary] = useState<Recipe[]>([])
 
   useEffect(() => {
     const fetchMealPlan = async () => {
       try {
         const response = await axios.get('http://localhost:8000/recipe/meal-plan/')
-        const updatedMealPlan = Array(7).fill(null)
+        const updatedMealPlan: (Recipe | null)[] = Array(7).fill(null)
         response.data.forEach((entry: any) => {
           if (entry.recipe) {
             updatedMealPlan[entry.day] = entry.recipe
@@ -100,34 +110,34 @@ const MealPage = () => {
     fetchRecipes()
   }, [])
 
-  const fetchNewRecipe = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/recipe/random')
-      const newRecipe = response.data
-      if (!recipeLibrary.some((r) => r.name === newRecipe.name)) {
-        setRecipeLibrary((prev) => [...prev, newRecipe])
-      }
-    } catch (error) {
-      console.error('Error fetching new recipe:', error)
-    }
-  }
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (over && over.id.toString().startsWith('day-')) {
       const dayIndex = parseInt(over.id.toString().split('-')[1])
-      const droppedRecipe = active.data.current
+      const droppedRecipe = active.data.current as Recipe | undefined
+      if (!droppedRecipe) return
 
       const updatedPlan = [...mealPlan]
+
+      // Return existing recipe to the library if one already exists
+      const previousRecipe = updatedPlan[dayIndex]
+      if (previousRecipe) {
+        setRecipeLibrary((prev) => [...prev, previousRecipe])
+      }
+
+      // Update meal plan with dropped recipe
       updatedPlan[dayIndex] = droppedRecipe
       setMealPlan(updatedPlan)
 
-      fetchNewRecipe()
+      // Remove dropped recipe from recipeLibrary
+      setRecipeLibrary((prevLibrary) =>
+        prevLibrary.filter((recipe) => recipe.name !== droppedRecipe.name)
+      )
     }
   }
 
   const handleSave = async () => {
-    const updatedMeal = {
+    const updatedMeal: Recipe = {
       name: recipeName,
       instructions: recipeInstructions.includes('\n')
         ? recipeInstructions.split('\n')
@@ -154,8 +164,14 @@ const MealPage = () => {
 
   const handleDelete = async (index: number) => {
     const updatedPlan = [...mealPlan]
+    const removedRecipe = updatedPlan[index]
     updatedPlan[index] = null
     setMealPlan(updatedPlan)
+
+    // Add the deleted recipe back to the library
+    if (removedRecipe) {
+      setRecipeLibrary((prev) => [...prev, removedRecipe])
+    }
 
     try {
       await axios.put('http://localhost:8000/recipe/meal-plan/', {
@@ -237,9 +253,9 @@ const MealPage = () => {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-          <div>
-            <h3 style={{ fontSize: '13px' }}>Recipe Library</h3>
+        <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '13px' }}>Recipe Library</h3>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', flexWrap: 'wrap' }}>
             {recipeLibrary.map((recipe) => (
               <RecipeCard key={recipe.name} recipe={recipe} />
             ))}
@@ -263,9 +279,7 @@ const MealPage = () => {
                   {mealPlan[index]?.name || 'No meal planned'}
                 </DroppableCell>
                 <td style={{ border: '1px solid', padding: '8px' }}>
-                  {Array.isArray(mealPlan[index]?.instructions)
-                    ? mealPlan[index]?.instructions.join(', ')
-                    : mealPlan[index]?.instructions || '-'}
+                  {formatInstructions(mealPlan[index]?.instructions)}
                 </td>
                 <td style={{ border: '1px solid', padding: '8px' }}>
                   <button
@@ -305,5 +319,3 @@ const MealPage = () => {
 }
 
 export default MealPage
-
-
