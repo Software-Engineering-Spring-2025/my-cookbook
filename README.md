@@ -12,7 +12,7 @@
 
 ![AutoPEP8 Workflow](https://github.com/Software-Engineering-Spring-2025/my-cookbook/actions/workflows/autopep8.yml/badge.svg)
 ![Flake8 Workflow](https://github.com/Software-Engineering-Spring-2025/my-cookbook/actions/workflows/flake8.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/ncsugroup17/my-cookbook/badge.svg?branch=main)](https://coveralls.io/github/ncsugroup17/my-cookbook?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/Software-Engineering-Spring-2025/my-cookbook/badge.svg?branch=feature/readme-update)](https://coveralls.io/github/Software-Engineering-Spring-2025/my-cookbook?branch=feature/readme-update)
 
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
