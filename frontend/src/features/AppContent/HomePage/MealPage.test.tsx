@@ -315,3 +315,323 @@ test('fetchNewRecipe does not add duplicate recipes', async () => {
 });
 });
 
+//######################################################
+//######################################################
+
+//1
+test('opens the edit form and selects a day', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  expect(screen.getByText('Save')).toBeInTheDocument();
+  const select = screen.getByLabelText(/Day:/i) as HTMLSelectElement;
+
+  fireEvent.change(select, { target: { value: '3' } });
+  expect(select.value).toBe('3'); // Thursday
+});
+
+//2
+test('opens the edit form and selects a day', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  expect(screen.getByText('Save')).toBeInTheDocument();
+  const select = screen.getByLabelText(/Day:/i) as HTMLSelectElement;
+
+  fireEvent.change(select, { target: { value: '3' } });
+  expect(select.value).toBe('3'); // Thursday
+});
+
+//3
+
+test('handles cancel edit by hiding the form', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+
+  const button = screen.getByText('Edit Meal Plan');
+  fireEvent.click(button);
+  expect(screen.getByText('Save')).toBeInTheDocument();
+
+  fireEvent.click(button);
+  expect(screen.queryByText('Save')).not.toBeInTheDocument();
+});
+
+//4
+test('does not update if inputs are empty', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '0' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: '' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: '' } });
+
+  fireEvent.click(screen.getByText('Save'));
+
+  const cell = screen.getByText('Monday').closest('tr')?.querySelectorAll('td')[1];
+  expect(cell).toHaveTextContent('No meal planned');
+});
+
+//5
+test('edits an existing meal and overrides it', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '2' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Curry' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Simmer sauce, Add chicken' } });
+
+  fireEvent.click(screen.getByText('Save'));
+
+  await waitFor(() => {
+    const row = screen.getByText('Wednesday').closest('tr');
+    expect(row).toHaveTextContent('Curry');
+    expect(row).toHaveTextContent('Simmer sauce, Add chicken');
+  });
+});
+
+//6
+test('re-edits same day cell with new recipe', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '0' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Rice' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Boil water, Add rice' } });
+  fireEvent.click(screen.getByText('Save'));
+
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '0' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Noodles' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Boil, Stir, Serve' } });
+  fireEvent.click(screen.getByText('Save'));
+
+  await waitFor(() => {
+    const row = screen.getByText('Monday').closest('tr');
+    expect(row).toHaveTextContent('Noodles');
+  });
+});
+
+//7
+test('does not save meal if recipe name is empty', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '5' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: '' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), {
+    target: { value: 'Some step' }
+  });
+
+  fireEvent.click(screen.getByText('Save'));
+
+  await waitFor(() => {
+    const row = screen.getByText('Saturday').closest('tr');
+    expect(row).toHaveTextContent('No meal planned');
+  });
+});
+
+//8
+test('form pre-fills values for previously edited day when reopened', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '0' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Chili' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Boil beans' } });
+  fireEvent.click(screen.getByText('Save'));
+
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '0' } });
+
+  expect(screen.getByLabelText(/Recipe:/i)).toHaveValue('');
+  expect(screen.getByLabelText(/Instructions:/i)).toHaveValue('');
+});
+
+//9
+test('clicking Cancel Edit hides the form', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  const editBtn = screen.getByText('Edit Meal Plan');
+
+  fireEvent.click(editBtn);
+  expect(screen.getByLabelText(/Recipe:/i)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('Cancel Edit'));
+  expect(screen.queryByLabelText(/Recipe:/i)).not.toBeInTheDocument();
+});
+
+//10
+test('shows saved meal in correct row after Save', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '3' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Salad' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Chop vegetables' } });
+
+  fireEvent.click(screen.getByText('Save'));
+
+  await waitFor(() => {
+    const row = screen.getByText('Thursday').closest('tr');
+    expect(row).toHaveTextContent('Salad');
+    expect(row).toHaveTextContent('Chop vegetables');
+  });
+});
+//11
+test('editing one day does not affect others', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '0' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Stew' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Simmer slow' } });
+  fireEvent.click(screen.getByText('Save'));
+
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '6' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Juice' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Squeeze oranges' } });
+  fireEvent.click(screen.getByText('Save'));
+
+  await waitFor(() => {
+    expect(screen.getByText('Monday').closest('tr')).toHaveTextContent('Stew');
+    expect(screen.getByText('Sunday').closest('tr')).toHaveTextContent('Juice');
+  });
+});
+
+//12 -- FAILS
+test('displays the Recipe Library section heading', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  const libraryHeading = screen.getByText('Recipe Library');
+  expect(libraryHeading).toBeInTheDocument();
+  expect(libraryHeading.tagName).toBe('H3');
+});
+
+
+//13
+test('handles multiline instructions in textarea correctly', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  
+  const textarea = screen.getByLabelText(/Instructions:/i);
+  fireEvent.change(textarea, { 
+    target: { value: 'Step 1\nStep 2\nStep 3' } 
+  });
+  
+  expect(textarea).toHaveValue('Step 1\nStep 2\nStep 3');
+  
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '1' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Test Recipe' } });
+  
+  fireEvent.click(screen.getByText('Save'));
+  
+  await waitFor(() => {
+    const stepsCell = screen.getByText('Tuesday').closest('tr')?.querySelectorAll('td')[2];
+    expect(stepsCell?.textContent).toContain('Step 1, Step 2, Step 3');
+  });
+});
+
+//14 FAILS
+test('meal table has 7 rows for the days of the week', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  dayNames.forEach(day => {
+    expect(screen.getByText(day)).toBeInTheDocument();
+  });
+  
+  // Check if we have 7 rows (not including header row)
+  const rows = screen.getAllByRole('row').slice(1); // Skip header row
+  expect(rows.length).toBe(7);
+});
+
+
+//15
+test('handles comma-separated instructions correctly', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '5' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Comma Recipe' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { 
+    target: { value: 'Prep,Cook,Serve' } 
+  });
+  
+  fireEvent.click(screen.getByText('Save'));
+  
+  await waitFor(() => {
+    const stepsCell = screen.getByText('Saturday').closest('tr')?.querySelectorAll('td')[2];
+    expect(stepsCell?.textContent).toContain('Prep, Cook, Serve');
+  });
+});
+
+//16
+test('displays the Print Meal Plan button', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  const printButton = screen.getByText('Print Meal Plan');
+  expect(printButton).toBeInTheDocument();
+  expect(printButton.tagName).toBe('BUTTON');
+});
+
+//17
+test('allows consecutive saves without closing the form', async () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  // First meal
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '1' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Breakfast' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Morning steps' } });
+  fireEvent.click(screen.getByText('Save'));
+  
+  // After save, form should be hidden and we need to reopen it
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  
+  // Second meal
+  fireEvent.change(screen.getByLabelText(/Day:/i), { target: { value: '2' } });
+  fireEvent.change(screen.getByLabelText(/Recipe:/i), { target: { value: 'Lunch' } });
+  fireEvent.change(screen.getByLabelText(/Instructions:/i), { target: { value: 'Midday steps' } });
+  fireEvent.click(screen.getByText('Save'));
+  
+  await waitFor(() => {
+    expect(screen.getByText('Tuesday').closest('tr')).toHaveTextContent('Breakfast');
+    expect(screen.getByText('Wednesday').closest('tr')).toHaveTextContent('Lunch');
+  });
+});
+
+//18
+test('meal table displays correct column headers', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  const headers = screen.getAllByRole('columnheader');
+  expect(headers.length).toBe(4);
+  
+  const headerTexts = headers.map(header => header.textContent);
+  expect(headerTexts).toEqual(['Day', 'Recipe', 'Steps', 'Actions']);
+});
+
+
+//19
+test('edit form has recipe and instructions inputs', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  
+  fireEvent.click(screen.getByText('Edit Meal Plan'));
+  
+  expect(screen.getByLabelText(/Recipe:/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/Instructions:/i)).toBeInTheDocument();
+});
+
+//20
+test('displays the correct page title', () => {
+  render(<ThemeProvider><MealPage /></ThemeProvider>);
+  expect(screen.getByText('My Meal Plan')).toBeInTheDocument();
+});
+
+
