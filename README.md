@@ -227,36 +227,30 @@ To set up the front end React app, do:
 
 # Examples
 
-## ✨ New Feature 5.0
-For feature 5.0, we wanted to do something different, something that helps people search new recipe faster, while at the same time add new recipes and if the user like the recipe, making it their personal favourite.
+## ✨ New Feature 6.0
+For feature 6.0 we wanted to add more functionality to the Meal Page while also introducing an AI chat box to make searching for recipies that much easier. We also added the ability to make notes specific for each user and to add ingredients from a recipe directly to your shopping cart. 
 
-### ⭐ Instant Recipe Favorites  
-Save your top recipes instantly with a single click! The **"Add to Favorites"** button allows users to quickly store their chosen recipes in a personalized favorites section, eliminating the hassle of endless scrolling. Effortlessly retrieve your saved recipes anytime, with the **favorites section** always available for easy access to your preferred culinary creations.
+### ⭐Drag and Drop/edit Meal Page.
+Create your own recipies on the Meal Page tab and save them for any day of the week so you can plan for your own diet. Also you can now use the drag and drop functionality where you can drag a recipie onto a day and it appears with the steps. You can also drag and drop recipies you made yourself if you replace it with a meal from the recipie library. 
 
-![Favourite Recipe](images/image-17.png)
+<img width="1267" alt="meal plan" src="https://github.com/user-attachments/assets/35a58dca-0f5e-4079-80ae-a5ef49a0132c" />
 
-![Favourite Click](images/image-6.png)
 
-### 🍽️ Share Your Own Recipes  
-Unleash your inner chef by adding your own recipes! Simply fill out a form with essential details, including **ingredients**, **cooking time**, **step-by-step instructions**, and **photos** for a complete recipe description. For easy organization and quick retrieval, assign **categories** and **tags** to your creations, making your personalized recipe collection easily accessible anytime.
-
-![Add Recipe](images/image-7.png)
-
-![Filled Recipe](images/image-8.png)
-
-![Success Recipe Add](images/image-10.png) ![Error Recipe Add](images/image-11.png)
-
-### 🥗 Smart AI Nutrition-Based Recipe Filtering  
-Find the perfect recipe that fits your dietary needs with **advanced nutrition-based filtering**! Easily filter recipes by **calories**, **protein**, **carbs**, and **fats**, setting specific nutritional criteria to match your health goals. Plus, let the **AI recommend personalized recipes** tailored to popular dietary plans like **keto**, **vegan**, **low-carb**, or **high-protein**, ensuring every meal aligns with your lifestyle.
-
-![AI image](images/image-12.png)
-
-![Filled form](images/image-13.png) ![resutl](images/image-14.png)
+### 🍽️ Unleash the Power of the Cooking Assistant 
+If you are short on time and want to find something without all the hassle of looking thorugh multiple pages of recipies feel free to use our new chat bot located at the bottom right of the screen with the chat icon to find/get help with any recipie you want. A quick search like "give me a recipe for lasanga" will give you the ingredients needed, serving size, and the instructions on how to make it. Cooking made easy.
+<img width="677" alt="lasanga" src="https://github.com/user-attachments/assets/ea81625b-de42-476b-b37a-f3f8f3ec6080" />
 
 
 
-The smart AI fills the nutrition filter for you.
-![Auto filled bar](images/image-15.png)
+### 🥗 Quick Notes & Ingredients  
+Add notes specific to each user to recipies you find online to help tweak them to your liking, or to just leave some general notes for yourself for the next time you use that recipie Previous notes saved to the bottom so you can keep track of hat you have said about specific recipies. To make things even easier we also added a send to shopping cart that automatically fills your cart with the ingredients neefded for the specific recipe. 
+
+<img width="1269" alt="pizza" src="https://github.com/user-attachments/assets/97676d38-eb5a-4545-b685-1d03d711aa07" />
+
+<img width="597" alt="yes" src="https://github.com/user-attachments/assets/a4777e85-6db3-4887-8312-b91514f82a84" />
+
+<img width="597" alt="done" src="https://github.com/user-attachments/assets/8b8ff49a-108a-4190-8563-cbe78f9a19af" />
+
 
 ## ✨ New Functions 
 CookBook has been upgraded with exciting new features to make your cooking experience smarter, more interactive, and hassle-free! Below are the highlights of the latest functionalities added:
