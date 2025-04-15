@@ -400,7 +400,7 @@ Following extensions have to be added to you VS Code editor:
 ```
 
 # Code Coverage for 6.0
-![code coverage image](images/image-16.png)
+![code coverage image](images/image-18.png)
 
 # Code Coverage
 [Codecov](https://app.codecov.io/gh/yzhu27/CookBook)
