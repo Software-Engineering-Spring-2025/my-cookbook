@@ -104,9 +104,11 @@ John is interested in a virtual cookbook to keep track of his recipes. Using My 
 # 🚀What's New?
 
 ## New features:
-- ⭐ **Instant Recipe Favorites**: Save your top recipes instantly with a single click!
-- 🍽️ **Share Your Own Recipes**: Unleash your inner chef by adding your own recipes!
-- 🥗 **Smart AI Nutrition-Based Recipe Filtering**: Find the perfect recipe that fits your dietary needs with advanced nutrition-based filtering! 
+- ⭐ **Enables drag and drop functionality on the Meal Plan tab**: Better organization and visibility for existing recipes!
+- 🍽️ **Converse with our AI Chat Bot**: Offering endless possibilities for helping the user, such as answering insightful prompts
+like 'write me a recipe for a tangy chicken dish,' 'how healthy is a grilled cheese,' and 'what should I eat for breakfast'!
+- 🥗 **Add ingredients from each recipe to your shopping list with the push of one button**: Saving the users time, one recipe at a time!
+- 👩‍🍳 **Save notes on each recipe**: Add your thoughts and customizations on each recipe; your future cooking self will thank you!
   
 With CookBook, cooking becomes an adventure. What will you create today? 🥘👨‍🍳👩‍🍳  
 ---
@@ -116,6 +118,9 @@ With CookBook, cooking becomes an adventure. What will you create today? 🥘�
 
 Click the image above to watch the demo video on YouTube! 🚀
 
+## 🌠 Poster 
+
+[![New Poster!](https://github.com/Software-Engineering-Spring-2025/my-cookbook/blob/main/My%20Cook%20Book.pdf)
 
 
 # 🚀 Better Software Design  
