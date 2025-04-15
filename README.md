@@ -104,18 +104,23 @@ John is interested in a virtual cookbook to keep track of his recipes. Using My 
 # 🚀What's New?
 
 ## New features:
-- ⭐ **Instant Recipe Favorites**: Save your top recipes instantly with a single click!
-- 🍽️ **Share Your Own Recipes**: Unleash your inner chef by adding your own recipes!
-- 🥗 **Smart AI Nutrition-Based Recipe Filtering**: Find the perfect recipe that fits your dietary needs with advanced nutrition-based filtering! 
+- ⭐ **Enables drag and drop functionality on the Meal Plan tab**: Better organization and visibility for existing recipes!
+- 🍽️ **Converse with our AI Chat Bot**: Offering endless possibilities for helping the user, such as answering insightful prompts
+like 'write me a recipe for a tangy chicken dish,' 'how healthy is a grilled cheese,' and 'what should I eat for breakfast'!
+- 🥗 **Add ingredients from each recipe to your shopping list with the push of one button**: Saving the users time, one recipe at a time!
+- 👩‍🍳 **Save notes on each recipe**: Add your thoughts and customizations on each recipe; your future cooking self will thank you!
   
 With CookBook, cooking becomes an adventure. What will you create today? 🥘👨‍🍳👩‍🍳  
 ---
 ## 🎥 Demo Video  
 
-[![New Demo!](https://img.youtube.com/vi/IluD4IUT5kM/0.jpg)](https://youtu.be/fWfs_Mxc5CQ)
+[![New Demo!](https://img.youtube.com/vi/IluD4IUT5kM/0.jpg)](https://drive.google.com/file/d/122zMzuhALnOrEYqiL2VeKSrRU2KILKYw/view)
 
 Click the image above to watch the demo video on YouTube! 🚀
 
+## 🌠 Poster 
+
+[View our Poster (PDF)](https://github.com/Software-Engineering-Spring-2025/my-cookbook/raw/main/My%20Cook%20Book.pdf)
 
 
 # 🚀 Better Software Design  
@@ -168,6 +173,16 @@ PORT = 8000
 
 ## 📊 Dataset
 You can find the dataset used for this project [here](https://drive.google.com/file/d/12CZFb7Ugmiw9zQ7M_qpRsn7pmaV1zW0c/view?usp=sharing)
+
+To import the dataset into MongoDB, checkout the commandline tools section within the cluster. Data Import and Export Tools section of the page should contain the necessary command to import your data to the cluster. 
+
+Here is the command that you would find in it
+```bash
+mongoimport --uri mongodb+srv://<USERNAME>:<PASSWORD>@cluster0.ve4gdtc.mongodb.net/<DATABASE> --collection <COLLECTION> --type <FILETYPE> --file <FILENAME> --jsonArray
+```
+
+Add the jsonArray flag at the end as shown to import all of the data at once.
+
 
 ## 🔧 Backend Installation
 
