@@ -166,8 +166,6 @@ GROQ_API_KEY = ...
 PORT = 8000
 
 ```
-*   [Docker](https://docs.docker.com/get-docker/)
-*   [Docker Compose](https://docs.docker.com/compose/install/)
 *   (Optional) [Python 3.11](https://www.python.org/downloads/) and [pytest 7.4.4](https://docs.pytest.org/) for testing the API
 *   (Optional) [Node.js](https://nodejs.org/en/download/) and [npm](https://docs.npmjs.com/cli/v7/commands/npm) for frontend testing
 
@@ -858,7 +856,6 @@ CookBook
 ├─ LICENSE
 ├─ README.md
 ├─ api
-│  ├─ Dockerfile
 │  ├─ __init__.py
 │  ├─ main.py
 │  ├─ models.py
@@ -880,7 +877,6 @@ CookBook
 │  ├─ team_edit.png
 │  ├─ video1.m4v
 │  └─ video2.m4v
-├─ docker-compose.yml
 ├─ docs
 │  ├─ Home.css
 │  ├─ Safety.md
@@ -922,7 +918,6 @@ CookBook
 │  ├─ .prettierrc.json
 │  ├─ .vscode
 │  │  └─ settings.json
-│  ├─ Dockerfile
 │  ├─ README.md
 │  ├─ package-lock.json
 │  ├─ package.json

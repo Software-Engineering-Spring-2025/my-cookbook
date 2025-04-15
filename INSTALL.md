@@ -1,104 +1,76 @@
-  Project Installation and Setup
-
 Project Installation and Setup
 ==============================
 
 This guide provides instructions for setting up and testing the project using Docker and Docker Compose. Follow the steps below to get your development environment up and running smoothly.
 
-Prerequisites
--------------
+# 🛠️Installations  
 
-*   [Docker](https://docs.docker.com/get-docker/)
-*   [Docker Compose](https://docs.docker.com/compose/install/)
+## Prerequisites  
+Before setting up the project, ensure you have the following installed:  
+- **[MongoDB](https://www.mongodb.com/products/platform/cloud)**: Create a cluster and generate the DB URL, username, and password.  
+- **[GROQ](https://groq.com/)**: Create an API key.  
+- **Create a `.env` file** in the `api` folder with the following details:  
+```env
+ATLAS_URI = ...
+DATABASE = cookbook
+GROQ_API_KEY = ...
+PORT = 8000
+
+```
 *   (Optional) [Python 3.11](https://www.python.org/downloads/) and [pytest 7.4.4](https://docs.pytest.org/) for testing the API
 *   (Optional) [Node.js](https://nodejs.org/en/download/) and [npm](https://docs.npmjs.com/cli/v7/commands/npm) for frontend testing
 
-Installation
-------------
+## 📊 Dataset
+You can find the dataset used for this project [here](https://drive.google.com/file/d/12CZFb7Ugmiw9zQ7M_qpRsn7pmaV1zW0c/view?usp=sharing)
 
-1.  **Clone the Repository:**
-    
-        git clone <repository-url>
-        cd <repository-folder>
-    
-2.  **Create a .env File:**
-    
-    Before running the Docker command, create a `.env` file in the `api` folder with the following structure:
-    
-        ATLAS_URI=
-        DB_NAME=cookbook
-        GROQ_API_KEY=
-    
-3.  **Start the Services:**
-    
-    Make sure Docker and Docker Compose are installed, then run the following command in the project root:
-    
-        docker compose up --build -d
-    
-    This command will:
-    
-    *   Build the images
-    *   Start the backend and frontend services in detached mode
-4.  **Access the Application:**
-    
-    Once the services are up, you can start development right away. Access the frontend and backend as needed from your Docker setup.
-    
+To import the dataset into MongoDB, checkout the commandline tools section within the cluster. Data Import and Export Tools section of the page should contain the necessary command to import your data to the cluster. 
 
-Testing the API
----------------
+Here is the command that you would find in it
+```bash
+mongoimport --uri mongodb+srv://<USERNAME>:<PASSWORD>@cluster0.ve4gdtc.mongodb.net/<DATABASE> --collection <COLLECTION> --type <FILETYPE> --file <FILENAME> --jsonArray
+```
 
-To test the API, you'll need to install Python and pytest.
+Add the jsonArray flag at the end as shown to import all of the data at once.
 
-### Steps:
 
-1.  **Install Python 3.11 and pytest:**
-    
-    Make sure you have Python 3.11 installed, and set up a virtual environment (recommended) to manage dependencies:
-    
-        python3.11 -m venv venv
-        source venv/bin/activate  # On Windows: venv\Scripts\activate
-        pip install pytest==7.4.4
-    
-2.  **Run Tests:**
-    
-    From the root directory, run the following command to execute all API tests:
-    
-        pytest tests/test_api.py
-    
-    This will run all tests in `tests/test_api.py` to verify the API is functioning correctly.
-    
+## 🔧 Backend Installation
 
-Frontend Testing
-----------------
+Follow these steps to set up and run the backend server:
 
-To test the frontend, you will need to have Node.js and npm installed.
+1. **Navigate to the API folder**:
+   ```bash
+   cd api
+   
+2. **Install required dependencies**:
+    ```bash
+    pip install -r requirements.txt
 
-### Steps:
+3. **Run the application server**:
+   ```bash
+   python -m uvicorn main:app --reload
 
-1.  **Install Node.js and npm:**
-    
-    Follow the instructions on the [Node.js website](https://nodejs.org/en/download/) to install Node.js, which includes npm.
-    
-2.  **Install Dependencies:**
-    
-    Navigate to the frontend folder and run the following command to install dependencies:
-    
-        npm install
-    
-3.  **Run Tests:**
-    
-    After installing the dependencies, run the following command to execute the frontend tests:
-    
-        npm test
-    
 
-Additional Notes
-----------------
 
-*   To stop the Docker services, run:
-    
-        docker compose down
-    
-*   To view logs for debugging, use:
-    
-        docker compose logs -f
+### 🛠️Trouble Shooting
+
+In case you run into any issues running the above commands, some operating systems may require you to use `python3` instead of `python` and `pip3` instead of `pip`.<br><br>
+
+## 🎨Frontend Installation
+
+To set up the front end React app, do:
+1. **Navigate to the frontend folder**:
+   ```bash
+   cd frontend
+
+   
+2. **Install required dependencies**:
+    ```bash
+    npm install
+
+3. **If the above command fails, use the following alternative:**:
+   ```bash
+   npm install --legacy-peer-deps
+   
+4. **Start the React app:**
+   ```bash
+   npm start
