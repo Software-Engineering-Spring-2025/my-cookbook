@@ -120,7 +120,7 @@ Click the image above to watch the demo video on YouTube! 🚀
 
 ## 🌠 Poster 
 
-[View our Poster (PDF)](https://github.com/Software-Engineering-Spring-2025/my-cookbook/raw/main/My%20Cook%20Book.pdf)
+[![Poster Preview](images/PosterPreview.png)](https://github.com/Software-Engineering-Spring-2025/my-cookbook/raw/main/My%20Cook%20Book.pdf)
 
 
 # 🚀 Better Software Design  
