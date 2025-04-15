@@ -169,6 +169,16 @@ PORT = 8000
 ## 📊 Dataset
 You can find the dataset used for this project [here](https://drive.google.com/file/d/12CZFb7Ugmiw9zQ7M_qpRsn7pmaV1zW0c/view?usp=sharing)
 
+To import the dataset into MongoDB, checkout the commandline tools section within the cluster. Data Import and Export Tools section of the page should contain the necessary command to import your data to the cluster. 
+
+Here is the command that you would find in it
+```bash
+mongoimport --uri mongodb+srv://<USERNAME>:<PASSWORD>@cluster0.ve4gdtc.mongodb.net/<DATABASE> --collection <COLLECTION> --type <FILETYPE> --file <FILENAME> --jsonArray
+```
+
+Add the jsonArray flag at the end as shown to import all of the data at once.
+
+
 ## 🔧 Backend Installation
 
 Follow these steps to set up and run the backend server:
